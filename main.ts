@@ -83,7 +83,7 @@ class ZipReader {
     };
     let offset = 0;
     const fileNames = [];
-    while (offset < this.cdSize) {
+    for (let i = 0; i < this.cdRecordsCount; i++) {
       const r = readCDFileHeader(offset);
       offset = r.nextOffset;
       fileNames.push(r.data.fileName);
