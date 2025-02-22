@@ -4,6 +4,7 @@
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
-    "@types/node": "npm:@types/node@^22.13.5"
+    "@types/node": "npm:@types/node@^22.13.5",
+    "fast-xml-parser": "npm:fast-xml-parser@^5.0.6"
   }
 }
