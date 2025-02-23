@@ -15,7 +15,7 @@ deno add jsr:@maheshbansod/xlsx
 npx jsr add @maheshbansod/xlsx
 ```
 
-See [jsr.io](https://jsr.io/@maheshbansod/xlsx@0.1.0) page for more.
+See [jsr.io](https://jsr.io/@maheshbansod/xlsx) page for more.
 
 ### Usage
 
@@ -27,4 +27,4 @@ const csvData = await readXlsx(filename);
 console.log(csvData);
 ```
 
-See the documentation on jsr: [https://jsr.io/@maheshbansod/xlsx@0.1.0/doc/~/readXlsx](https://jsr.io/@maheshbansod/xlsx@0.1.0/doc/~/readXlsx).
+See the documentation on jsr: [https://jsr.io/@maheshbansod/xlsx/doc/~/readXlsx](https://jsr.io/@maheshbansod/xlsx/doc/~/readXlsx).
