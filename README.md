@@ -4,8 +4,27 @@ Convert XLSX file to a textual format like CSV.
 
 ### Installation
 
-<TODO>
+#### Deno
+
+```sh
+deno add jsr:@maheshbansod/xlsx
+```
+
+### Node/NPM
+```sh
+npx jsr add @maheshbansod/xlsx
+```
+
+See [jsr.io](https://jsr.io/@maheshbansod/xlsx@0.1.0) page for more.
 
 ### Usage
 
-<TODO>
+```typescript
+import * as xlsx from "@maheshbansod/xlsx";
+
+const filename = "test/sample.xlsx";
+const csvData = await readXlsx(filename);
+console.log(csvData);
+```
+
+See the documentation on jsr: [https://jsr.io/@maheshbansod/xlsx@0.1.0/doc/~/readXlsx](https://jsr.io/@maheshbansod/xlsx@0.1.0/doc/~/readXlsx).
