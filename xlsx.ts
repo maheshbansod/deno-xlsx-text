@@ -19,6 +19,9 @@ type XlsxParsingOptions = {
   filterSheets?: (sheet: ParsedSheet) => boolean;
 };
 
+/**
+ * Read an XLSX file and return the sheets' contents.
+ */
 export async function readXlsx(
   filename: string,
   options?: XlsxParsingOptions,
