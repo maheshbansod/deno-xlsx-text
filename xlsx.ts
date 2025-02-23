@@ -25,7 +25,12 @@ type XlsxParsingOptions = {
 export async function readXlsx(
   filename: string,
   options?: XlsxParsingOptions,
-) {
+): Promise<{
+  sheet: {
+    name: string;
+  };
+  data: string;
+}[]> {
   options = options || {};
   options.debug = options?.debug || false;
   options.filterSheets = options?.filterSheets || (() => true);
