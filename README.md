@@ -11,6 +11,7 @@ deno add jsr:@maheshbansod/xlsx
 ```
 
 ### Node/NPM
+
 ```sh
 npx jsr add @maheshbansod/xlsx
 ```
@@ -27,4 +28,5 @@ const csvData = await readXlsx(filename);
 console.log(csvData);
 ```
 
-See the documentation on jsr: [https://jsr.io/@maheshbansod/xlsx/doc/~/readXlsx](https://jsr.io/@maheshbansod/xlsx/doc/~/readXlsx).
+See the documentation on jsr:
+[https://jsr.io/@maheshbansod/xlsx/doc/~/readXlsx](https://jsr.io/@maheshbansod/xlsx/doc/~/readXlsx).

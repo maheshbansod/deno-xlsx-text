@@ -42,7 +42,6 @@ export class ZipReader {
     if (eocdSignatureIndex === -1) {
       throw new Error(`Couldn't find the EOCD`);
     }
-    const diskNumber = readBytesAsNumber(buffer, eocdSignatureIndex + 4, 2);
     const cdRecordsCount = readBytesAsNumber(
       buffer,
       eocdSignatureIndex + 10,
