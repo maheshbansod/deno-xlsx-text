@@ -19,7 +19,7 @@ type XlsxParsingOptions = {
   filterSheets?: (sheet: ParsedSheet) => boolean;
 };
 
-export async function xlsxToCsv(
+export async function readXlsx(
   filename: string,
   options?: XlsxParsingOptions,
 ) {
