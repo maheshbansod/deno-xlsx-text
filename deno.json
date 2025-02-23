@@ -1,5 +1,6 @@
 {
   "tasks": {
+      "debug": "DENO_XLSX_DEBUG=true deno run -A --watch main.ts",
     "dev": "deno run -A --watch main.ts"
   },
   "imports": {

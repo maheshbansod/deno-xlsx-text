@@ -14,7 +14,20 @@ const StyleIdsMap = {
   0: CellDataType.Value,
 } as const satisfies Record<number, CellDataType>;
 
-export async function xlsxToCsv(filename: string) {
+type XlsxParsingOptions = {
+  debug?: boolean;
+  filterSheets?: (sheet: ParsedSheet) => boolean;
+};
+
+export async function xlsxToCsv(
+  filename: string,
+  options?: XlsxParsingOptions,
+) {
+  options = options || {};
+  options.debug = options?.debug || false;
+  options.filterSheets = options?.filterSheets || (() => true);
+  const { debug } = options;
+  const { filterSheets } = options;
   const zipReader = await ZipReader.new(filename);
   const files = await zipReader.listFiles();
   const compressedData: {
@@ -43,15 +56,20 @@ export async function xlsxToCsv(filename: string) {
       });
     });
   }));
+  if (debug) {
+    const fileNames = data.map((d) => d.filename).join(",");
+    console.log("Files found in archive: " + fileNames);
+  }
   const workbook = data.find((d) => d.filename.endsWith("/workbook.xml"));
   if (!workbook) {
     throw new Error("No workbook.xml found!");
   }
   const xmlParser = new XMLParser({ ignoreAttributes: false });
-  const parsedXml = xmlParser.parse(workbook.result);
-  const sheets: ParsedSheet[] = parsedXml.workbook.sheets.length
-    ? parsedXml.workbook.sheets
-    : [parsedXml.workbook.sheets.sheet];
+  const parsedWorkBookXml: ParsedWorkBook = xmlParser.parse(workbook.result);
+  const sheets = xmlObjAsList(parsedWorkBookXml.workbook.sheets.sheet);
+  if (debug) {
+    console.log({ sheets });
+  }
   const sharedStringsFile = data.find((d) =>
     d.filename === "xl/sharedStrings.xml"
   );
@@ -61,7 +79,9 @@ export async function xlsxToCsv(filename: string) {
   const parsedSharedStrings: ParsedSharedStrings = xmlParser.parse(
     sharedStringsFile.result,
   );
-  const sharedStrings = parsedSharedStrings.sst.si.map((s) => s.t);
+  const sharedStrings = parsedSharedStrings.sst.si.map((s) =>
+    typeof s.t === "string" ? s.t : s.t["#text"]
+  );
   const stylesFile = data.find((d) => d.filename === "xl/styles.xml");
   if (!stylesFile) {
     throw new Error("Couldn't find styles");
@@ -71,7 +91,7 @@ export async function xlsxToCsv(filename: string) {
     StyleIdsMap[Number(x["@_numFmtId"]) as keyof typeof StyleIdsMap]
   );
   const csvSheets = [];
-  for (const sheet of sheets) {
+  for (const sheet of sheets.filter(filterSheets)) {
     const id = sheet["@_sheetId"];
     const fileName = `xl/worksheets/sheet${id}.xml`;
     const sheetFile = data.find((d) => d.filename.endsWith(fileName));
@@ -97,18 +117,22 @@ export async function xlsxToCsv(filename: string) {
               } else if (styles[styleIdx] === CellDataType.Duration) {
                 return durationFmt(excelDurationToJS(Number(c.v)));
               } else {
-                return c.v;
+                return c.v.toString();
               }
             } else {
-              return c.v;
+              return c.v.toString();
             }
           }
           return "";
-        }).join(","),
+        }).map((s) => {
+          return s.includes(",") ? `"${s.replace(/"/g, '\\"')}"` : s;
+        }).join(
+          ",",
+        ),
       );
     }
     const csvData = csvRows.join("\n").trim();
-    csvSheets.push(csvData);
+    csvSheets.push({ sheet: { name: sheet["@_name"] }, data: csvData });
   }
   return csvSheets;
 }
@@ -124,6 +148,14 @@ type ParsedCol = {
   v?: string;
 };
 
+type ParsedWorkBook = {
+  workbook: {
+    sheets: {
+      sheet: ParsedSheet | ParsedSheet[];
+    };
+  };
+};
+
 type ParsedSheet = {
   "@_state": "visible";
   "@_name": string;
@@ -134,7 +166,9 @@ type ParsedSheet = {
 type ParsedSharedStrings = {
   sst: {
     si: {
-      t: string;
+      t: string | {
+        "#text": string;
+      };
     }[];
   };
 };
